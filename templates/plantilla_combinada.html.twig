@@ -1,0 +1,65 @@
+{# templates/plantilla_combinada.html.twig #}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda Online</title>
+    <link rel="stylesheet" href="ruta/a/tu/archivo.css">
+</head>
+<body>
+    <header class="bg-primary text-white py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="{{ path('index') }}" class="h4 text-white text-decoration-none">Tienda Online</a>
+            <nav>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a href="{{ path('index') }}" class="nav-link text-white">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ path('categories') }}" class="nav-link text-white">Categorías</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ path('product') }}" class="nav-link text-white">Productos</a>
+                    </li>
+
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <li class="nav-item">
+                            <span class="nav-link text-white">Bienvenido, {{ app.user.username }}</span>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('app_logout') }}" class="btn btn-light text-primary">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="{{ path('app_login') }}" class="btn btn-light text-primary">Login</a>
+                        </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a href="{{ path('cart') }}" class="nav-link text-white">
+                            <img src="imagenes/carrito.avif" alt="Carrito" style="width: 31px; height: auto;">
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Aquí va el contenido específico de cada página -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-dark text-white py-4 fixed-bottom">
+        <div class="container text-center">
+        <p>&copy; 2025 Difadi.com</p>
+        <div class="d-flex justify-content-center">
+            <p class="mx-3"><strong>Correo general:</strong> <a href="mailto:info@difadi.com" class="text-white">info@difadi.com</a></p>
+            <p class="mx-3"><strong>Correo soporte:</strong> <a href="mailto:soporte@difadi.com" class="text-white">soporte@difadi.com</a></p>
+            <p class="mx-3"><strong>Dirección:</strong> C/ Calzadas 37, 09004 Burgos</p>
+            <p class="mx-3"><strong>Teléfono:</strong> 947 06 26 26</p>
+        </div>
+        </div>
+    </footer>
+</body>
+</html>

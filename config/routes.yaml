@@ -3,3 +3,31 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+    
+index:
+    path: /
+    controller: App\Controller\IndexController::index
+
+product:
+    path: /producto
+    controller: App\Controller\ProductController::index
+
+categories:
+    path: /categorias
+    controller: App\Controller\CategoriesController::index
+
+cart:   
+    path: /carrito
+    controller: App\Controller\CartController::index
+
+
+
+admin:
+    path: /admin
+    controller: App\Controller\Admin\AdminController::index
+
+admin_login:
+    path: /admin/login
+    controller: App\Controller\Admin\AdminController::login
+
+

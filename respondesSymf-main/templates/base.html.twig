@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        {% block stylesheets %}
+        {% endblock %}
+
+        {% block javascripts %}
+        
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+           
+        {% endblock %}
+    </head>
+    <header>
+        
+       {% if app.user %}
+            <div class="mb-3">
+                Bienvenido, {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div>
+                    <a href="{{ path('admin') }}">Modo Administrador</h2></a>
+                    
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="mb-3">
+                <a href="{{ path('app_login') }}">Login</a>
+            </div>
+        {% endif %}
+            <div>
+            <a href="{{ path('app_pregunta') }}" class="">Preguntas activas</a>
+            </div>
+            {% if app.user %}
+            <div>
+                <a href="{{ path('app_respondidas') }}" class="">Preguntas respondidas</a>
+            </div>
+            {% endif %}
+    </header>
+    <body>
+        {% block body %}{% endblock %}
+    </body>
+   <footer>
+    <div class="footer-content">
+        <!-- Redes sociales -->
+        <div class="social-media">
+            <a href="https://facebook.com" target="_blank" class="social-icon">
+                <img src="facebook-icon.png" alt="Facebook">
+            </a>
+            <a href="https://twitter.com" target="_blank" class="social-icon">
+                <img src="twitter-icon.png" alt="Twitter">
+            </a>
+            <a href="https://instagram.com" target="_blank" class="social-icon">
+                <img src="instagram-icon.png" alt="Instagram">
+            </a>
+            <a href="https://linkedin.com" target="_blank" class="social-icon">
+                <img src="linkedin-icon.png" alt="LinkedIn">
+            </a>
+        </div>
+
+        <!-- Enlaces adicionales -->
+        <div class="links">
+            <a href="/privacy-policy">Política de privacidad</a>
+            <a href="/terms-of-service">Términos de servicio</a>
+            <a href="/contact">Contacto</a>
+        </div>
+
+        <!-- Derechos de autor -->
+        <div class="copyright">
+            <p>&copy; 2024 Respondes. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+</html>

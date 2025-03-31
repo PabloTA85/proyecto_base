@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pregunta: {{ pregunta.enunciado }}{% endblock %}
+
+{% block body %}
+    
+<div class="containerBody">
+
+    <div class="containerShow">
+        <h1>{{ pregunta.enunciado }}</h1>
+        
+        <div class="opciones" data-pregunta-id="{{ pregunta.id }}" data-usuario-id="{{ app.user.id }}">
+            <span data-opcion="a">{{pregunta.a}}</span>
+            <span data-opcion="b">{{pregunta.b}}</span>
+            <span data-opcion="c">{{pregunta.c}}</span>
+            <span data-opcion="d">{{pregunta.d}}</span>
+        </div>
+        
+        <button class="responder-btn">Responder</button>
+        
+    </div>
+
+
+    <!-- Si quieres mostrar un gráfico, puedes usar Chart.js -->
+    <div class="respuestasChart">
+    <canvas id="respuestasChart"></canvas></div>
+</div>   
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script>
+    console.log({{ pregunta.id | json_encode(constant('JSON_PRETTY_PRINT')) }});
+</script>
+    
+{% endblock %}

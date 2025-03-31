@@ -1,0 +1,18 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content %}
+    <h1>Bienvenido a Respondes</h1>
+    {# <p>Accede a las secciones de administración usando el menú de la izquierda.</p> #}
+    <br>
+    <div class="mt-4">
+        <a class="btn btn-primary" href="{{ path('admin') }}">
+            Preguntas
+        </a>
+        <a class="btn btn-primary" href="{{ path('admin') }}">
+            Usuarios
+        </a>
+        <a class="btn btn-primary" href="{{ path('app_pregunta') }}">Modo Usuario</a>
+    </div>
+
+    
+{% endblock %}

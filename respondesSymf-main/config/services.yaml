@@ -1,0 +1,45 @@
+# config/services.yaml
+
+parameters:
+    # Puedes agregar parámetros aquí si lo necesitas
+
+services:
+    # Configuración por defecto para autowiring y autoconfiguración
+    _defaults:
+        autowire: true      # Symfony inyecta automáticamente las dependencias en los servicios
+        autoconfigure: true # Symfony configura automáticamente las clases para ser suscriptores de eventos, comandos, etc.
+
+    # Hacemos que Symfony reconozca las clases dentro de 'src/'
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # Definición explícita de los servicios necesarios
+
+    # Servicio EmailService
+    App\Service\EmailService:
+        autowire: true  # Inyección automática de dependencias
+        autoconfigure: true  # Configuración automática
+
+    # Servicio PdfGeneratorService
+    App\Service\PdfGeneratorService:
+        autowire: true  # Inyección automática de dependencias
+        autoconfigure: true  # Configuración automática
+
+    
+        
+    
+    # App\EventSubscriber\UserEmailSubscriber:
+    #     autowire: true
+    #     autoconfigure: true
+    #     tags:
+    #         - { name: 'doctrine.event_listener', event: 'prePersist' }
+    
+    App\EventListener\UserEmailEventListener:
+        autowire: true
+        autoconfigure: true
+        tags:
+            - { name: 'doctrine.event_listener', event: 'prePersist' }

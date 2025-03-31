@@ -1,0 +1,109 @@
+{% extends 'plantilla_combinada.html.twig' %}
+
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<main class="py-5">
+    <div class="container">
+        <h1 class="display-4 text-center mb-4">Categorías</h1>
+
+        <div class="row row-cols-1 row-cols-md-2 g-4"> 
+            {% for categoria in categorias %}
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="/imagenes/{{ categoria.name|lower }}.jpg" alt="{{ categoria.name }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ categoria.name }}</h5>
+                            <button class="btn btn-primary ver-productos" data-id="{{ categoria.idCategory }}" data-name="{{ categoria.name }}">
+                                Ver productos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+<!-- Modal de Bootstrap -->
+<div class="modal fade" id="productosModal" tabindex="-1" aria-labelledby="productosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productosModalLabel">Motos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="productosContainer" class="row row-cols-1 row-cols-md-3 g-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $(".ver-productos").click(function () {
+            let categoriaId = $(this).data("id");
+            let categoriaName = $(this).data("name");
+
+            // Cambia el título del modal
+            $("#productosModalLabel").text("Motos " + categoriaName);
+
+            // Limpia el contenedor antes de cargar nuevos productos
+            $("#productosContainer").html("<p>Cargando productos...</p>");
+
+            // Llama a la API para obtener los productos
+            $.ajax({
+                url: "/category/" + categoriaId + "/products",
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    if (data.length === 0) {
+                        $("#productosContainer").html("<p>No hay productos en esta categoría.</p>");
+                        return;
+                    }
+
+                    let productosHtml = "";
+                    data.forEach(function (item) {
+                        productosHtml += `
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="${item.product.image}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${item.product.name}</h5>
+                                        <p class="card-text">${item.product.description}</p>
+                                        <p class="card-text"><strong>Precio:</strong> ${item.product.price} €</p>
+                                        <p class="card-text"><strong>Stock:</strong> ${item.product.stock}</p>
+                                        <button class="btn btn-success comprar-producto" data-id="${item.product.id}">Comprar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    // Inserta las motos en el modal
+                    $("#productosContainer").html(productosHtml);
+                },
+                error: function () {
+                    $("#productosContainer").html("<p>Error al cargar los productos.</p>");
+                }
+            });
+
+            // Muestra el modal
+            var productosModal = new bootstrap.Modal(document.getElementById('productosModal'));
+            productosModal.show();
+        });
+
+        // Evento para el botón "Comprar"
+        $(document).on("click", ".comprar-producto", function () {
+            let productId = $(this).data("id");
+            alert("Has comprado el producto con ID: " + productId);
+        });
+    });
+</script>
+
+{% endblock %}

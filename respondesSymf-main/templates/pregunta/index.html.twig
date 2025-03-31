@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Preguntas activas{% endblock %}
+
+{% block body %}
+
+        
+<div class="container">
+    <h1 class="text-center">Preguntas activas</h1>
+
+    <!-- Tabla personalizada -->
+    <table class="table">
+        <thead>
+            <tr>
+              
+               
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for pregunta in pagination %}
+                <tr>
+                 
+                    <td class="pregunta_enun">{{ pregunta.enunciado }}</td>
+                    <td>
+                        
+                     
+                        <a class="responder-btn" href="{{ path('pregunta_show', {id: pregunta.id}) }}">show</a>
+                       
+                      
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No se encontraron preguntas.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Controles de paginación -->
+    <div class="pagination">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+</div>
+{% endblock %}
+
+
