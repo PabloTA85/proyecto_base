@@ -1,0 +1,164 @@
+{% extends 'admin/combined_template.html.twig' %}
+
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="d-flex flex-column min-vh-100">
+    <main class="flex-grow-1">
+        <div class="container">
+            <h1 class="display-4 text-center mb-4 mt-5">Motos en tienda</h1>
+
+            <!-- Botón para abrir el modal de creación de producto -->
+            <div class="mb-3">
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#createProductModal">
+                    Añadir motocicleta
+                </button>
+            </div>
+
+            <!-- Contenedor de Cards -->
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for producto in productos %}
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="{% if producto.product_image is not empty %}{{ asset(producto.product_image) }}{% else %}https://via.placeholder.com/150{% endif %}" class="card-img-top" alt="{{ producto.product_name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ producto.product_name }}</h5>
+                            <p class="card-text">{{ producto.product_description }}</p>
+                            <p class="card-text"><strong>Categoría:</strong> {{ producto.category_name }}</p>
+                            <p class="card-text"><strong>Precio:</strong> {{ producto.product_price }}€</p>
+
+                            <!-- Botones para editar y eliminar -->
+                            <div class="d-flex justify-content-between">
+                                <!-- Botón para abrir el modal de edición -->
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editProductModal-{{ producto.id_product }}">
+                                    Editar
+                                </button>
+
+                                <!-- Formulario de eliminación -->
+                                <form action="{{ path('admin_product_delete', {'id': producto.id_product}) }}" method="POST" style="display: inline-block;">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal para editar el producto -->
+                <div class="modal fade" id="editProductModal-{{ producto.id_product }}" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editProductModalLabel">Editar Producto</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Formulario HTML para editar un producto -->
+                                <form action="{{ path('admin_product_update', {'id': producto.id_product}) }}" method="POST" enctype="multipart/form-data">
+                                    <div class="mb-3">
+                                        <label for="product_name" class="form-label">Nombre del producto</label>
+                                        <input type="text" class="form-control" id="product_name" name="product_name" value="{{ producto.product_name }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="product_description" class="form-label">Descripción del producto</label>
+                                        <textarea class="form-control" id="product_description" name="product_description" rows="3" required>{{ producto.product_description }}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="product_price" class="form-label">Precio</label>
+                                        <input type="number" class="form-control" id="product_price" name="product_price" value="{{ producto.product_price }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="product_image" class="form-label">Imagen del producto</label>
+                                        <input type="file" class="form-control" id="product_image" name="product_image">
+                                    </div>
+                                    <button type="submit" class="btn btn-warning w-100">Actualizar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal para crear un producto -->
+<div class="modal fade" id="createProductModal" tabindex="-1" aria-labelledby="createProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createProductModalLabel">Crear Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulario HTML para crear un producto -->
+                <form id="createProductForm" enctype="multipart/form-data" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nombre del producto</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción del producto</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Precio</label>
+                        <input type="number" class="form-control" id="price" name="price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stock" class="form-label">Stock</label>
+                        <input type="number" class="form-control" id="stock" name="stock" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Categoría</label>
+                        <select class="form-select" id="category" name="category[]" multiple required>
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.id_category }}">{{ categoria.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Imagen del producto</label>
+                        <input type="file" class="form-control" id="image" name="image">
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">Añadir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.getElementById('createProductForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(this);
+
+        // Enviar la solicitud usando Fetch API
+        fetch('/admin/producto/nuevo', {
+            method: 'POST',
+            body: formData, // Enviar el formulario con los datos
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message); // Mostrar mensaje de éxito
+                $('#createProductModal').modal('hide'); // Cerrar el modal
+                document.getElementById('createProductForm').reset(); // Limpiar el formulario
+                location.reload(); // Recargar la página para mostrar el nuevo producto
+            } else if (data.error) {
+                alert('Error: ' + data.error); // Mostrar mensaje de error
+            }
+        })
+        .catch(error => {
+            alert('Error al crear el producto: ' + error);
+        });
+    });
+</script>
+
+{% endblock %}

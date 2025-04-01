@@ -1,25 +1,46 @@
 {# templates/admin/combined_template.html.twig #}
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda Online</title>
     <link rel="stylesheet" href="ruta/a/tu/archivo.css">
+    <style>
+        /* Hace que el contenido empuje el footer hacia abajo */
+        html, body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            padding-bottom: 60px; /* Espacio suficiente para evitar superposición */
+        }
+
+        footer {
+            background: #343a40;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: auto; /* Se mantiene abajo sin tapar contenido */
+        }
+    </style>
 </head>
 <body>
-    <body>
     <header class="bg-warning text-dark py-3">
-        <div class="container d-flex justify-between align-items-center">
+        <div class="container d-flex justify-content-between align-items-center">
             <nav class="w-full">
                 <ul class="nav flex justify-center">
                     <li class="nav-item">
                         <a href="{{ path('index') }}" class="nav-link text-dark">Pedidos</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('categories') }}" class="nav-link text-dark">Categorías</a>
+                        <a href="{{ path('admin_category') }}" class="nav-link text-dark">Categorías</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('product') }}" class="nav-link text-dark">Productos</a>
+                        <a href="{{ path('admin_product') }}" class="nav-link text-dark">Productos</a>
                     </li>
 
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
@@ -39,26 +60,19 @@
         </div>
     </header>
 
-
-
-
-
-
-
     <main>
-        <!-- Aquí va el contenido específico de cada página -->
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-dark text-white py-4 fixed-bottom">
-        <div class="container text-center">
-        <p>&copy; 2025 Difadi.com</p>
-        <div class="d-flex justify-content-center">
-            <p class="mx-3"><strong>Correo general:</strong> <a href="mailto:info@difadi.com" class="text-white">info@difadi.com</a></p>
-            <p class="mx-3"><strong>Correo soporte:</strong> <a href="mailto:soporte@difadi.com" class="text-white">soporte@difadi.com</a></p>
-            <p class="mx-3"><strong>Dirección:</strong> C/ Calzadas 37, 09004 Burgos</p>
-            <p class="mx-3"><strong>Teléfono:</strong> 947 06 26 26</p>
-        </div>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Difadi.com</p>
+            <div class="d-flex justify-content-center">
+                <p class="mx-3"><strong>Correo general:</strong> <a href="mailto:info@difadi.com" class="text-white">info@difadi.com</a></p>
+                <p class="mx-3"><strong>Correo soporte:</strong> <a href="mailto:soporte@difadi.com" class="text-white">soporte@difadi.com</a></p>
+                <p class="mx-3"><strong>Dirección:</strong> C/ Calzadas 37, 09004 Burgos</p>
+                <p class="mx-3"><strong>Teléfono:</strong> 947 06 26 26</p>
+            </div>
         </div>
     </footer>
 </body>

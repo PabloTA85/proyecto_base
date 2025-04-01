@@ -53,7 +53,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // Redirige a la página principal (index) después del login exitoso
-        return new RedirectResponse($this->urlGenerator->generate('index'));
+        return new RedirectResponse($this->urlGenerator->generate('admin'));
     }
 
     protected function getLoginUrl(Request $request): string

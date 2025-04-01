@@ -32,7 +32,7 @@ class Product
     private ?string $image = null;
 
     #[ORM\OneToMany(mappedBy: "product", targetEntity: ProductCategorie::class)]
-    #[Ignore] 
+    #[Ignore]
     private Collection $categories;
 
     public function __construct()
@@ -103,5 +103,27 @@ class Product
     public function getCategories(): Collection
     {
         return $this->categories;
+    }
+
+    public function setCategories(Collection $categories): self
+    {
+        $this->categories = $categories;
+        return $this;
+    }
+
+    // Añadir categoría a un producto
+    public function addCategory(Categorie $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+        }
+        return $this;
+    }
+
+    // Eliminar categoría de un producto
+    public function removeCategory(Categorie $category): self
+    {
+        $this->categories->removeElement($category);
+        return $this;
     }
 }

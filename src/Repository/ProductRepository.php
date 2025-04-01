@@ -17,9 +17,8 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    /**
-     * Método para obtener productos por nombre
-     */
+
+    // Método para obtener productos por nombre
     public function findByName(string $name): array
     {
         return $this->createQueryBuilder('p')
@@ -29,13 +28,12 @@ class ProductRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * Método para obtener productos con sus categorias ordenados por nombre ascendente
-     */
+
+    // Método para obtener productos con sus categorias ordenados por nombre ascendente
     public function findAllWithCategoryOrderedByName(): array
     {
         return $this->createQueryBuilder('p')
-            ->select('p.id_product', 'p.name AS product_name', 'p.description AS product_description', 'c.name AS category_name', 'p.price AS product_price', 'p.image AS product_image') // Añadimos el campo 'image'
+            ->select('p.id_product', 'p.name AS product_name', 'p.description AS product_description', 'c.name AS category_name', 'p.price AS product_price', 'p.image AS product_image') 
             ->join('p.categories', 'pc')
             ->join('pc.category', 'c')
             ->orderBy('p.name', 'ASC')
@@ -44,9 +42,8 @@ class ProductRepository extends ServiceEntityRepository
     }
 
 
-    /**
-     * Método para ordenar productos por su nombre de manera ascendente
-     */
+
+    // Método para ordenar productos por su nombre de manera ascendente
     public function findAllOrderedByName(): array
     {
         return $this->createQueryBuilder('p')
@@ -56,9 +53,8 @@ class ProductRepository extends ServiceEntityRepository
     }
 
 
-    /**  
-     * Método para obtener todos los productos ordenados por precio de menor a mayor
-     */
+
+    // Método para obtener todos los productos ordenados por precio de menor a mayor
     public function findAllOrderedByPrice(): array
     {
         return $this->createQueryBuilder('p')
@@ -67,19 +63,44 @@ class ProductRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * Método para obtener todos los productos
-     */
+
+    // Método para obtener todos los productos
     public function findAllProducts(): array
     {
         return $this->findAll();
     }
 
-    /**
-     * Método para obtener productos por su id
-     */
+
+    // Método para obtener productos por su id
     public function findProductById(int $id): ?Product
     {
         return $this->find($id);
+    }
+
+    // Método para crear un producto
+    public function create(Product $product): Product
+    {
+        $this->_em->persist($product);
+        $this->_em->flush();
+        return $product;
+    }
+
+
+    // Método para actualizar un producto
+    public function update(Product $product): Product
+    {
+        $this->_em->flush();
+        return $product;
+    }
+
+
+    // Método para eliminar un producto
+    public function delete(int $id): void
+    {
+        $product = $this->find($id);  
+        if ($product) {
+            $this->_em->remove($product);  
+            $this->_em->flush();  
+        }
     }
 }

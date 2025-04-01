@@ -30,4 +30,21 @@ admin_login:
     path: /admin/login
     controller: App\Controller\Admin\AdminController::login
 
+admin_category:
+    path: /admin/category
+    controller: App\Controller\Admin\AdminCategoryController::index
+
+admin_product:
+    path: /admin/product
+    controller: App\Controller\Admin\AdminProductController::index
+
+
+
+
+
+
+
+
+
+
 

@@ -1,6 +1,5 @@
 <?php
 
-// src/Controller/Admin/AdminController.php
 
 namespace App\Controller\Admin;
 

@@ -16,9 +16,8 @@ class CategorieRepository extends ServiceEntityRepository
         parent::__construct($registry, Categorie::class);
     }
 
-    /**
-     * Método para buscar una categoría por su nombre
-     */
+
+    //Método para buscar una categoría por su nombre
     public function findByName(string $name): ?Categorie
     {
         return $this->createQueryBuilder('c')
@@ -28,22 +27,50 @@ class CategorieRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    /**
-     * Método para buscar una categoría por su ID
-     */
+
+    //Método para buscar una categoría por su ID
     public function findById($id): ?Categorie
     {
         return $this->find($id);
     }
 
-    /**
-     * Método para buscar todas las categorías
-     */
+    public static function findAllCategorieDFD($entityManager): array
+    {
+        return $entityManager->getRepository(Categorie::class)->findAll();
+    }
+
+
+    //Método para buscar todas las categorías
     public function findAllCategorie(): array
     {
         return $this->findAll();
     }
 
+
+    // Método para crear una categoría nueva
+    public function create(Categorie $categorie): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($categorie);
+        $entityManager->flush();
+    }
+
+
+    // Método para actualizar una categoría 
+    public function update(Categorie $categorie): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->flush();
+    }
+
+
+    // Método para eliminar una categoría
+    public function delete(Categorie $categorie): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($categorie);
+        $entityManager->flush();
+    }
 }
 
     //    /**
@@ -70,4 +97,3 @@ class CategorieRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-

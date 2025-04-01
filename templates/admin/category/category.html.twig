@@ -1,4 +1,4 @@
-{% extends 'plantilla_combinada.html.twig' %}
+{% extends 'admin/combined_template.html.twig' %}
 
 {% block content %}
 
@@ -8,6 +8,13 @@
     <div class="container">
         <h1 class="display-4 text-center mb-4">Categorías</h1>
 
+        <!-- Formulario para agregar nueva categoría -->
+        <div class="mb-4">
+            <h3>Añadir Nueva Categoría</h3>
+            <input type="text" id="newCategoryName" class="form-control mb-2" placeholder="Nombre de la categoría">
+            <button id="addCategoryBtn" class="btn btn-warning">Agregar</button>
+        </div>
+
         <div class="row row-cols-1 row-cols-md-2 g-4"> 
             {% for categoria in categorias %}
                 <div class="col">
@@ -15,9 +22,11 @@
                         <img src="/imagenes/{{ categoria.name|lower }}.jpg" alt="{{ categoria.name }}" class="card-img-top" style="height: 200px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title">{{ categoria.name }}</h5>
-                            <button class="btn btn-primary ver-productos" data-id="{{ categoria.idCategory }}" data-name="{{ categoria.name }}">
+                            <button class="btn btn-warning ver-productos" data-id="{{ categoria.idCategory }}" data-name="{{ categoria.name }}">
                                 Ver productos
                             </button>
+                            <button class="btn btn-warning edit-category" data-id="{{ categoria.idCategory }}" data-name="{{ categoria.name }}">Editar</button>
+                            <button class="btn btn-warning delete-category" data-id="{{ categoria.idCategory }}">Eliminar</button>
                         </div>
                     </div>
                 </div>
@@ -26,13 +35,13 @@
     </div>
 </main>
 
-<!-- Modal de Bootstrap -->
+<!-- Modal de Bootstrap para ver productos -->
 <div class="modal fade" id="productosModal" tabindex="-1" aria-labelledby="productosModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="productosModalLabel">Motos</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" style="background-color: #f0ad4e; border: none;" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div id="productosContainer" class="row row-cols-1 row-cols-md-3 g-4"></div>
@@ -46,17 +55,14 @@
 
 <script>
     $(document).ready(function () {
+        // Ver productos de la categoría
         $(".ver-productos").click(function () {
             let categoriaId = $(this).data("id");
             let categoriaName = $(this).data("name");
 
-            // Título del modal
             $("#productosModalLabel").text("Motos " + categoriaName);
-
-            // Limpia el contenedor antes de cargar nuevos productos
             $("#productosContainer").html("<p>Cargando productos...</p>");
 
-            // Llama a la API para obtener los productos
             $.ajax({
                 url: "/category/" + categoriaId + "/products",
                 method: "GET",
@@ -78,14 +84,12 @@
                                         <p class="card-text">${item.product.description}</p>
                                         <p class="card-text"><strong>Precio:</strong> ${item.product.price} €</p>
                                         <p class="card-text"><strong>Stock:</strong> ${item.product.stock}</p>
-                                        <button class="btn btn-success comprar-producto" data-id="${item.product.id}">Comprar</button>
                                     </div>
                                 </div>
                             </div>
                         `;
                     });
 
-                    // Inserta las motos en el modal
                     $("#productosContainer").html(productosHtml);
                 },
                 error: function () {
@@ -93,15 +97,75 @@
                 }
             });
 
-            // Muestra el modal
             var productosModal = new bootstrap.Modal(document.getElementById('productosModal'));
             productosModal.show();
         });
 
-        // Evento para el botón "Comprar"
-        $(document).on("click", ".comprar-producto", function () {
-            let productId = $(this).data("id");
-            alert("Has comprado el producto con ID: " + productId);
+        // Agregar nueva categoría
+        $("#addCategoryBtn").click(function () {
+            let categoryName = $("#newCategoryName").val().trim();
+            if (categoryName === "") {
+                alert("El nombre de la categoría no puede estar vacío.");
+                return;
+            }
+
+            $.ajax({
+                url: "/admin/categoria/nueva",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ name: categoryName }),
+                success: function () {
+                    alert("Categoría creada con éxito.");
+                    location.reload();
+                },
+                error: function () {
+                    alert("Error al crear la categoría.");
+                }
+            });
+        });
+
+        // Editar categoría
+        $(".edit-category").click(function () {
+            let categoryId = $(this).data("id");
+            let newCategoryName = prompt("Nuevo nombre de la categoría:", $(this).data("name"));
+
+            if (newCategoryName === null || newCategoryName.trim() === "") {
+                return;
+            }
+
+            $.ajax({
+                url: "/admin/categoria/" + categoryId,
+                method: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify({ name: newCategoryName }),
+                success: function () {
+                    alert("Categoría actualizada con éxito.");
+                    location.reload();
+                },
+                error: function () {
+                    alert("Error al actualizar la categoría.");
+                }
+            });
+        });
+
+        // Eliminar categoría
+        $(".delete-category").click(function () {
+            let categoryId = $(this).data("id");
+            if (!confirm("¿Estás seguro de que quieres eliminar esta categoría?")) {
+                return;
+            }
+
+            $.ajax({
+                url: "/admin/categoria/" + categoryId,
+                method: "DELETE",
+                success: function () {
+                    alert("Categoría eliminada con éxito.");
+                    location.reload();
+                },
+                error: function () {
+                    alert("Error al eliminar la categoría.");
+                }
+            });
         });
     });
 </script>
