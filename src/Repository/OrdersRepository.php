@@ -16,28 +16,79 @@ class OrdersRepository extends ServiceEntityRepository
         parent::__construct($registry, Orders::class);
     }
 
-//    /**
-//     * @return Orders[] Returns an array of Orders objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('o')
-//            ->andWhere('o.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('o.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * Save an order (insert or update)
+     */
+    public function save(Orders $order): void
+    {
+        $this->_em->persist($order);
+        $this->_em->flush();
+    }
 
-//    public function findOneBySomeField($value): ?Orders
-//    {
-//        return $this->createQueryBuilder('o')
-//            ->andWhere('o.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * Remove an order from the database
+     */
+    public function remove(Orders $order): void
+    {
+        $this->_em->remove($order);
+        $this->_em->flush();
+    }
+
+    /**
+     * Find orders by status
+     *
+     * @param string $status
+     * @return Orders[]
+     */
+    public function findByStatus(string $status): array
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.status = :status')
+            ->setParameter('status', $status)
+            ->orderBy('o.order_date', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Find orders by client
+     *
+     * @param int $clientId
+     * @return Orders[]
+     */
+    public function findByClient(int $clientId): array
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.client = :clientId')
+            ->setParameter('clientId', $clientId)
+            ->orderBy('o.order_date', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Find the most recent orders
+     *
+     * @param int $limit
+     * @return Orders[]
+     */
+    public function findRecentOrders(int $limit = 10): array
+    {
+        return $this->createQueryBuilder('o')
+            ->orderBy('o.order_date', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    // Método para traer todos los pedidos
+    public function findAllOrders(): array
+    {
+        return $this->createQueryBuilder('o')
+            ->leftJoin('o.client', 'c')  
+            ->addSelect('c')  
+            ->orderBy('o.order_date', 'DESC') 
+            ->getQuery()
+            ->getResult();
+    }
 }

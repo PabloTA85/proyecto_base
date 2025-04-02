@@ -15,23 +15,31 @@
             <button id="addCategoryBtn" class="btn btn-warning">Agregar</button>
         </div>
 
-        <div class="row row-cols-1 row-cols-md-2 g-4"> 
-            {% for categoria in categorias %}
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="/imagenes/{{ categoria.name|lower }}.jpg" alt="{{ categoria.name }}" class="card-img-top" style="height: 200px; object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ categoria.name }}</h5>
+        <!-- Tabla para mostrar las categorías -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for categoria in categorias %}
+                    <tr>
+                        <td>{{ categoria.idCategory }}</td>
+                        <td>{{ categoria.name }}</td>
+                        <td>
                             <button class="btn btn-warning ver-productos" data-id="{{ categoria.idCategory }}" data-name="{{ categoria.name }}">
                                 Ver productos
                             </button>
                             <button class="btn btn-warning edit-category" data-id="{{ categoria.idCategory }}" data-name="{{ categoria.name }}">Editar</button>
-                            <button class="btn btn-warning delete-category" data-id="{{ categoria.idCategory }}">Eliminar</button>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+                            <button class="btn btn-danger delete-category" data-id="{{ categoria.idCategory }}">Eliminar</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </main>
 
@@ -40,11 +48,24 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="productosModalLabel">Motos</h5>
+                <h5 class="modal-title" id="productosModalLabel">Productos</h5>
                 <button type="button" class="btn-close" style="background-color: #f0ad4e; border: none;" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="productosContainer" class="row row-cols-1 row-cols-md-3 g-4"></div>
+                <!-- Tabla para mostrar productos -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productosContainer">
+                        <!-- Aquí se cargarán los productos -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -61,7 +82,7 @@
             let categoriaName = $(this).data("name");
 
             $("#productosModalLabel").text("Motos " + categoriaName);
-            $("#productosContainer").html("<p>Cargando productos...</p>");
+            $("#productosContainer").html("<tr><td colspan='4' class='text-center'>Cargando productos...</td></tr>");
 
             $.ajax({
                 url: "/category/" + categoriaId + "/products",
@@ -69,31 +90,26 @@
                 dataType: "json",
                 success: function (data) {
                     if (data.length === 0) {
-                        $("#productosContainer").html("<p>No hay productos en esta categoría.</p>");
+                        $("#productosContainer").html("<tr><td colspan='4' class='text-center'>No hay productos en esta categoría.</td></tr>");
                         return;
                     }
 
                     let productosHtml = "";
                     data.forEach(function (item) {
                         productosHtml += `
-                            <div class="col">
-                                <div class="card h-100">
-                                    <img src="${item.product.image}" class="card-img-top" style="height: 200px; object-fit: cover;">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${item.product.name}</h5>
-                                        <p class="card-text">${item.product.description}</p>
-                                        <p class="card-text"><strong>Precio:</strong> ${item.product.price} €</p>
-                                        <p class="card-text"><strong>Stock:</strong> ${item.product.stock}</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <tr>
+                                <td>${item.product.name}</td>
+                                <td>${item.product.description}</td>
+                                <td>${item.product.price} €</td>
+                                <td>${item.product.stock}</td>
+                            </tr>
                         `;
                     });
 
                     $("#productosContainer").html(productosHtml);
                 },
                 error: function () {
-                    $("#productosContainer").html("<p>Error al cargar los productos.</p>");
+                    $("#productosContainer").html("<tr><td colspan='4' class='text-center'>No hay productos en la categoría</td></tr>");
                 }
             });
 

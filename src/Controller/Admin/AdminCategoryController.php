@@ -11,7 +11,6 @@ use App\Repository\CategorieRepository;
 use App\Entity\Categorie;
 use Doctrine\ORM\EntityManagerInterface;
 
-
 class AdminCategoryController extends AbstractController
 {
     private $categorieRepository;
@@ -44,11 +43,7 @@ class AdminCategoryController extends AbstractController
             return new JsonResponse(['error' => 'El nombre es obligatorio'], 400);
         }
 
-        // Declaro la variable $imageFile
-        $imageFile = $request->files->get('image');
         
-        // Subir la imagen 
-        $imagePath = $imageFile ? $this->uploadImage($imageFile) : null;
 
         $categoria = new Categorie();
         $categoria->setName($data['name']);
@@ -93,20 +88,5 @@ class AdminCategoryController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse(['message' => 'Categoría eliminada con éxito']);
-    }
-
-    private function uploadImage($imageFile): string
-    {
-        $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-        $newFilename = uniqid() . '.' . $imageFile->guessExtension();
-
-        try {
-            $destination = $this->getParameter('images_directory');
-            $imageFile->move($destination, $newFilename);
-
-            return 'imagenes/Product/' . $newFilename;
-        } catch (\Exception $e) {
-            throw new \Exception('Error al subir la imagen: ' . $e->getMessage());
-        }
     }
 }

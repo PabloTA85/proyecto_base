@@ -25,7 +25,7 @@ cart:
 admin:
     path: /admin
     controller: App\Controller\Admin\AdminController::index
-    
+
 admin_category:
     path: /admin/category
     controller: App\Controller\Admin\AdminCategoryController::index
@@ -33,6 +33,10 @@ admin_category:
 admin_product:
     path: /admin/product
     controller: App\Controller\Admin\AdminProductController::index
+
+admin_order:
+    path: /admin/order
+    controller: App\Controller\Admin\AdminOrderController::index
 
 
     

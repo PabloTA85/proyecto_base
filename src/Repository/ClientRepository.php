@@ -16,30 +16,44 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
+    // Crear un nuevo cliente
+    public function create(Client $client): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($client);
+        $entityManager->flush();
+    }
 
+    // Actualizar un cliente existente
+    public function update(Client $client): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->flush();
+    }
 
-//    /**
-//     * @return Client[] Returns an array of Client objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    // Eliminar un cliente
+    public function delete(Client $client): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($client);
+        $entityManager->flush();
+    }
 
-//    public function findOneBySomeField($value): ?Client
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    // Obtener un cliente por su ID
+    public function findClientById(int $id): ?Client
+    {
+        return $this->find($id);
+    }
+
+    // Obtener todos los clientes
+    public function findAllClients(): array
+    {
+        return $this->findAll();
+    }
+
+    // Buscar clientes por criterios específicos (por ejemplo, por nombre o correo electrónico)
+    public function findClientsByCriteria(array $criteria): array
+    {
+        return $this->findBy($criteria);
+    }
 }
