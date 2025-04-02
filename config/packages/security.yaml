@@ -23,8 +23,8 @@ security:
                 enable_csrf: true
                 
             logout:
-                path: app_logout
-                target: '/' 
+                path: /app_logout
+                target: '/admin' 
             custom_authenticator: App\Security\FormLoginAuthenticator
 
             remember_me:

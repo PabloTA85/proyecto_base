@@ -31,7 +31,7 @@ class Product
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $image = null;
 
-    #[ORM\OneToMany(mappedBy: "product", targetEntity: ProductCategorie::class)]
+    #[ORM\OneToMany(mappedBy: "product", targetEntity: ProductCategorie::class, cascade: ["remove"])]
     #[Ignore]
     private Collection $categories;
 

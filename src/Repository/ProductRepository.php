@@ -33,7 +33,7 @@ class ProductRepository extends ServiceEntityRepository
     public function findAllWithCategoryOrderedByName(): array
     {
         return $this->createQueryBuilder('p')
-            ->select('p.id_product', 'p.name AS product_name', 'p.description AS product_description', 'c.name AS category_name', 'p.price AS product_price', 'p.image AS product_image') 
+            ->select('p.id_product', 'p.name AS product_name', 'p.description AS product_description', 'c.name AS category_name', 'p.price AS product_price', 'p.stock AS product_stock', 'p.image AS product_image') 
             ->join('p.categories', 'pc')
             ->join('pc.category', 'c')
             ->orderBy('p.name', 'ASC')

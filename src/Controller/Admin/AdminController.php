@@ -23,7 +23,7 @@ class AdminController extends AbstractController
     {
         // Si ya está autenticado, redirige al panel de administración
         if ($this->getUser()) {
-            return $this->redirectToRoute('admin'); // Redirige al panel admin
+            return $this->redirectToRoute('admin'); 
         }
 
         // Obtén el error de autenticación si lo hay

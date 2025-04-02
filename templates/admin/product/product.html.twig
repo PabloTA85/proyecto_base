@@ -27,6 +27,7 @@
                             <p class="card-text">{{ producto.product_description }}</p>
                             <p class="card-text"><strong>Categoría:</strong> {{ producto.category_name }}</p>
                             <p class="card-text"><strong>Precio:</strong> {{ producto.product_price }}€</p>
+                            <p class="card-text"><strong>Stock:</strong> {{ producto.product_stock }}</p>
 
                             <!-- Botones para editar y eliminar -->
                             <div class="d-flex justify-content-between">
@@ -38,7 +39,7 @@
                                 <!-- Formulario de eliminación -->
                                 <form action="{{ path('admin_product_delete', {'id': producto.id_product}) }}" method="POST" style="display: inline-block;">
                                     <input type="hidden" name="_method" value="DELETE">
-                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                    <button type="submit" class="btn btn-warning">Eliminar</button>
                                 </form>
                             </div>
                         </div>
@@ -67,6 +68,10 @@
                                     <div class="mb-3">
                                         <label for="product_price" class="form-label">Precio</label>
                                         <input type="number" class="form-control" id="product_price" name="product_price" value="{{ producto.product_price }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="product_stock" class="form-label">Stock</label>
+                                        <input type="number" class="form-control" id="product_stock" name="product_stock" value="{{ producto.product_stock }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="product_image" class="form-label">Imagen del producto</label>
@@ -115,7 +120,7 @@
                         <label for="category" class="form-label">Categoría</label>
                         <select class="form-select" id="category" name="category[]" multiple required>
                             {% for categoria in categorias %}
-                                <option value="{{ categoria.id_category }}">{{ categoria.name }}</option>
+                                <option value="{{ categoria.idCategory }}">{{ categoria.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -134,31 +139,39 @@
 
 <script>
     document.getElementById('createProductForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+    event.preventDefault();
 
-        // Crear un objeto FormData para enviar los datos del formulario
-        const formData = new FormData(this);
+    // Crear un objeto FormData para enviar los datos del formulario
+    const formData = new FormData(this);
 
-        // Enviar la solicitud usando Fetch API
-        fetch('/admin/producto/nuevo', {
-            method: 'POST',
-            body: formData, // Enviar el formulario con los datos
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                alert(data.message); // Mostrar mensaje de éxito
-                $('#createProductModal').modal('hide'); // Cerrar el modal
-                document.getElementById('createProductForm').reset(); // Limpiar el formulario
-                location.reload(); // Recargar la página para mostrar el nuevo producto
-            } else if (data.error) {
-                alert('Error: ' + data.error); // Mostrar mensaje de error
-            }
-        })
-        .catch(error => {
-            alert('Error al crear el producto: ' + error);
-        });
+    // Enviar la solicitud usando Fetch API
+    fetch('/admin/producto/nuevo', {
+        method: 'POST',
+        body: formData, // Enviar el formulario con los datos
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert(data.message); // Mostrar mensaje de éxito
+            // Cerrar el modal usando el método de Bootstrap
+            var myModal = new bootstrap.Modal(document.getElementById('createProductModal'));
+            myModal.hide(); // Cerrar el modal
+
+            // Limpiar el formulario
+            document.getElementById('createProductForm').reset(); 
+
+            // Recargar la página para mostrar el nuevo producto
+            location.reload(); 
+        } else if (data.error) {
+            alert('Error: ' + data.error); // Mostrar mensaje de error
+        }
+    })
+    .catch(error => {
+        alert('Error al crear el producto: ' + error);
     });
+});
+
+
 </script>
 
 {% endblock %}

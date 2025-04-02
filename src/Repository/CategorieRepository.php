@@ -39,12 +39,17 @@ class CategorieRepository extends ServiceEntityRepository
         return $entityManager->getRepository(Categorie::class)->findAll();
     }
 
-
-    //Método para buscar todas las categorías
-    public function findAllCategorie(): array
+    // Método para obtener todas las categorías
+    public function findAll(): array
     {
-        return $this->findAll();
+        return $this->createQueryBuilder('c')
+            ->getQuery()
+            ->getResult();
     }
+
+
+
+
 
 
     // Método para crear una categoría nueva

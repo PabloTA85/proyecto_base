@@ -12,23 +12,31 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Categorie;
+use App\Entity\ProductCategorie;
+use App\Repository\ProductCategorieRepository;
 
 class AdminProductController extends AbstractController
 {
     private ProductRepository $productRepository;
     private EntityManagerInterface $entityManager;
     private CategorieRepository $categorieRepository;
+    private ProductCategorieRepository $productCategorieRepository;
 
-    public function __construct(ProductRepository $productRepository, EntityManagerInterface $entityManager)
-    {
+
+    public function __construct(
+        ProductRepository $productRepository,
+        EntityManagerInterface $entityManager,
+        CategorieRepository $categorieRepository,
+        ProductCategorieRepository $productCategorieRepository
+    ) {
         $this->productRepository = $productRepository;
         $this->entityManager = $entityManager;
-
+        $this->categorieRepository = $categorieRepository;
+        $this->productCategorieRepository = $productCategorieRepository;
     }
 
-    /**
-     * @Route("/admin/productos", name="admin_product_index", methods={"GET"})
-     */
+    #[Route('/admin/producto', name: 'admin_product_index', methods: ['GET'])]
     public function index(): Response
     {
         $productos = $this->productRepository->findAllWithCategoryOrderedByName();
@@ -85,7 +93,6 @@ class AdminProductController extends AbstractController
 
     public function create(Request $request): JsonResponse
     {
-        // Verificar si la solicitud es POST y tiene archivos
         if (!$request->isMethod('POST')) {
             return new JsonResponse(['error' => 'Método no permitido'], 405);
         }
@@ -95,22 +102,16 @@ class AdminProductController extends AbstractController
         $description = $request->request->get('description');
         $price = $request->request->get('price');
         $stock = $request->request->get('stock');
-        $imageFile = $request->files->get('image'); 
+        $categoriesIds = $request->request->all('category');
+        $imageFile = $request->files->get('image');
 
         // Validar los datos
         if (!$name || !$description || !$price || !$stock) {
             return new JsonResponse(['error' => 'Faltan datos obligatorios'], 400);
         }
 
-        // Subir la imagen si se proporciona
-        $imagePath = null;
-        if ($imageFile) {
-            try {
-                $imagePath = $this->uploadImage($imageFile);
-            } catch (\Exception $e) {
-                return new JsonResponse(['error' => $e->getMessage()], 500);
-            }
-        }
+        // Subir la imagen 
+        $imagePath = $imageFile ? $this->uploadImage($imageFile) : null;
 
         // Crear el producto
         $producto = new Product();
@@ -119,6 +120,17 @@ class AdminProductController extends AbstractController
         $producto->setPrice($price);
         $producto->setStock($stock);
         $producto->setImage($imagePath);
+
+        // Asociar categorías
+        foreach ($categoriesIds as $categoryId) {
+            $category = $this->entityManager->getRepository(Categorie::class)->find($categoryId);
+            if ($category) {
+                $productCategorie = new ProductCategorie();
+                $productCategorie->setProduct($producto);
+                $productCategorie->setCategory($category);
+                $this->entityManager->persist($productCategorie);
+            }
+        }
 
         $this->entityManager->persist($producto);
         $this->entityManager->flush();
@@ -129,38 +141,82 @@ class AdminProductController extends AbstractController
 
 
 
-    #[Route('/admin/producto/{id}/editar', name: 'admin_product_update', methods: ['GET', 'PUT', 'POST'])]
+    // #[Route('/admin/producto/{id}/editar', name: 'admin_product_update', methods: ['GET', 'PUT', 'POST'])]
 
-    public function update(Request $request, int $id): Response
+    // public function update(Request $request, int $id): Response
+    // {
+    //     $producto = $this->productRepository->find($id);
+    //     if (!$producto) {
+    //         throw $this->createNotFoundException('Producto no encontrado');
+    //     }
+
+    //     // Obtener todas las categorías
+    //     $categorias = $this->categorieRepository->findAllCategorieDFD($this->entityManager);
+
+    //     // Obtener todos los productos
+    //     $productos = $this->productRepository->findAllProducts();
+
+    //     $form = $this->createForm(ProductType::class, $producto);
+    //     $form->handleRequest($request);
+
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $imageFile = $form->get('image')->getData();
+    //         if ($imageFile) {
+    //             $newImageFilename = $this->uploadImage($imageFile);
+    //             $producto->setImage($newImageFilename);
+    //         }
+
+    //         $this->entityManager->flush();
+
+    //         return $this->redirectToRoute('admin_product_index');
+    //     }
+
+    //     return $this->render('admin/product/product.html.twig', [
+    //         'form' => $form->createView(),
+    //         'product' => $producto,
+    //         'categorias' => $categorias,
+    //         'productos' => $productos,
+    //     ]);
+    // }
+
+    // Actualizar un producto existente.
+    #[Route('/admin/producto/{id}/editar', name: 'admin_product_update', methods: ['POST', 'PUT'])]
+    public function updateProduct(Request $request, int $id): Response
     {
         $producto = $this->productRepository->find($id);
         if (!$producto) {
-            throw $this->createNotFoundException('Producto no encontrado');
+            return new JsonResponse(['error' => 'Producto no encontrado'], 404);
         }
 
-        // Obtener todos los productos
-        $productos = $this->productRepository->findAllWithCategoryOrderedByName();
+        // Obtener datos del formulario
+        $name = $request->request->get('product_name');
+        $description = $request->request->get('product_description');
+        $price = $request->request->get('product_price');
+        $stock = $request->request->get('product_stock');
 
-        $form = $this->createForm(ProductType::class, $producto);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $imageFile = $form->get('image')->getData();
-            if ($imageFile) {
-                $newImageFilename = $this->uploadImage($imageFile);
-                $producto->setImage($newImageFilename);
-            }
-
-            $this->entityManager->flush();
-
-            return $this->redirectToRoute('admin_product_index');
+        dump($producto->getStock());
+        dump($stock);
+        // Actualizar los datos del producto
+        if ($name) {
+            $producto->setName($name);
+        }
+        if ($description) {
+            $producto->setDescription($description);
+        }
+        if ($price) {
+            $producto->setPrice($price);
+        }
+        if ($stock) {
+            $producto->setStock($stock);
         }
 
-        return $this->render('admin/product/product.html.twig', [
-            'form' => $form->createView(),
-            'product' => $producto,
-            'productos' => $productos,
-        ]);
+        $this->entityManager->flush();
+
+        // mensaje de éxito al actualizar el producto
+        $this->addFlash('success', 'Producto actualizado correctamente.');
+
+        // Redirige a la lista de productos
+        return $this->redirectToRoute('admin_product_index');
     }
 
 
@@ -173,9 +229,14 @@ class AdminProductController extends AbstractController
             throw $this->createNotFoundException('Producto no encontrado');
         }
 
+        // Elimina el producto
         $this->entityManager->remove($product);
         $this->entityManager->flush();
 
+        // mensaje de éxito al eliminar el producto
+        $this->addFlash('success', 'Producto eliminado correctamente.');
+
+        // Redirige a la lista de productos
         return $this->redirectToRoute('admin_product_index');
     }
 
@@ -185,14 +246,12 @@ class AdminProductController extends AbstractController
         $newFilename = uniqid() . '.' . $imageFile->guessExtension();
 
         try {
-            $imageFile->move(
-                $this->getParameter('images_directory'),
-                $newFilename
-            );
+            $destination = $this->getParameter('images_directory');
+            $imageFile->move($destination, $newFilename);
+
+            return 'imagenes/Product/' . $newFilename;
         } catch (\Exception $e) {
             throw new \Exception('Error al subir la imagen: ' . $e->getMessage());
         }
-
-        return $newFilename;
     }
 }
