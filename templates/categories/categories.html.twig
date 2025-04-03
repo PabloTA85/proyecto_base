@@ -63,7 +63,7 @@
                 dataType: "json",
                 success: function (data) {
                     if (data.length === 0) {
-                        $("#productosContainer").html("<p>No hay productos en esta categoría.</p>");
+                        $("#productosContainer").html("<p>No hay motos en esta Categoría</p>");
                         return;
                     }
 
@@ -89,7 +89,7 @@
                     $("#productosContainer").html(productosHtml);
                 },
                 error: function () {
-                    $("#productosContainer").html("<p>Error al cargar los productos.</p>");
+                    $("#productosContainer").html("<p>No hay motos en esta Categoría</p>");
                 }
             });
 

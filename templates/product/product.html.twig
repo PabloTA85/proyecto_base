@@ -19,7 +19,7 @@
                             <h5 class="card-title">{{ producto.product_name }}</h5>
                             <p class="card-text">{{ producto.product_description }}</p>
                             <p class="card-text"><strong>Categoría:</strong> {{ producto.category_name }}</p>
-                            <p class="card-text"><strong>Precio:</strong> {{ producto.product_price }}€</p>
+                            <p class="card-text price"><strong>Precio:</strong> <span>{{ producto.product_price }}€</span></p>
                             <button class="btn btn-success comprar-btn" data-id="{{ producto.id_product }}">Comprar</button>
                         </div>
                     </div>
@@ -33,14 +33,62 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll(".comprar-btn").forEach(button => {
-            button.addEventListener("click", function() {
-                let productId = this.getAttribute("data-id");
-                alert("Producto con ID " + productId + " añadido al carrito.");
-            });
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".comprar-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            let card = this.closest(".card");
+            let productId = this.getAttribute("data-id");
+            let productName = card.querySelector(".card-title").textContent;
+
+            // Depuración: Ver qué se obtiene del precio
+            let priceElement = card.querySelector(".card-text.price span");
+            console.log("priceElement:", priceElement);
+
+            // Extraer el texto del precio
+            let productPriceText = priceElement ? priceElement.textContent : null;
+            console.log("productPriceText:", productPriceText);
+
+            // Extraer solo el número del precio, quitando el texto extra
+            let productPrice = 0;
+            if (productPriceText) {
+                productPriceText = productPriceText.replace("Precio:", "").replace("€", "").trim(); // Limpiar el texto
+                productPrice = parseFloat(productPriceText); 
+            }
+
+            console.log("productPrice:", productPrice);  
+
+            // Depuración: ver que se obtiene la Imágen
+            let imgElement = card.querySelector("img");
+            let productImage = imgElement? imgElement.getAttribute("src") : null;
+            console.log("productImage:", productImage);
+
+
+            // Obtener el carrito desde localStorage o inicializarlo
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+            // Buscar si el producto ya está en el carrito
+            let productoExistente = carrito.find(p => p.id === productId);
+
+            if (productoExistente) {
+                productoExistente.cantidad += 1;
+            } else {
+                carrito.push({
+                    id: productId,
+                    nombre: productName,
+                    precio: productPrice,
+                    imagen: productImage,  
+                    cantidad: 1
+                });
+            }
+
+            // Guardar en localStorage
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+
+            alert("Producto añadido al carrito.");
         });
     });
+});
 </script>
+
 
 {% endblock %}

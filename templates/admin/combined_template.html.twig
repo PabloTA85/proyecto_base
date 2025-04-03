@@ -31,6 +31,7 @@
 <body>
     <header class="bg-warning text-dark py-3">
     <div class="container d-flex justify-content-between align-items-center">
+        <!-- Parte izquierda: navegación -->
         <nav class="w-full">
             <ul class="nav flex justify-center">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
@@ -44,23 +45,24 @@
                         <a href="{{ path('admin_category') }}" class="nav-link text-dark">Categorías</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('admin_product') }}" class="nav-link text-dark">Productos</a>
-                    </li>
-                    <li class="nav-item">
-                        <span class="nav-link text-dark">Bienvenido, {{ app.user.username }}</span>
-                    </li>
-                    <li class="nav-item">
-                        <a href="app_logout" class="btn btn-light text-warning">Logout</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item ml-auto">
-                        <a href="{{ path('admin_login') }}" class="btn btn-light text-warning">Login</a>
+                        <a href="{{ path('admin_product') }}" class="nav-link text-dark">Motocicletas</a>
                     </li>
                 {% endif %}
             </ul>
         </nav>
+
+        <!-- Parte derecha: Usuario y logout -->
+        <div class="d-flex align-items-center">
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <span class="nav-link text-dark mr-3">Bienvenido, {{ app.user.username }}</span>
+                <a href="{{ path('_logout_main') }}" class="btn btn-light text-warning">Logout</a>
+            {% else %}
+                <a href="{{ path('admin_login') }}" class="btn btn-light text-warning">Login</a>
+            {% endif %}
+        </div>
     </div>
-    </header>
+</header>
+
 
     <main>
         {% block content %}{% endblock %}

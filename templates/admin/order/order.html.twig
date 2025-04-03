@@ -12,7 +12,6 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
                     <th scope="col">Cliente</th>
                     <th scope="col">Fecha</th>
                     <th scope="col">Status</th>
@@ -23,15 +22,16 @@
             <tbody>
                 {% for order in orders %}
                     <tr>
-                        <td>{{ order.idOrder }}</td>
-                        <td>{{ order.client.firstName }} {{ order.client.lastName }}</td>  <!-- Usar los métodos getter -->
-                        <td>{{ order.orderDate|date('Y-m-d H:i') }}</td>
-                        <td>{{ order.status }}</td>
-                        <td>{{ order.total }}</td>
+                        <td>{{ order.client.getFirstName }} {{ order.client.getLastName }}</td>
+                        <td>{{ order.getOrderDate|date('Y-m-d H:i') }}</td>
+                        <td>{{ order.getStatus }}</td>
+                        <td>{{ order.getTotal }} €</td>
                         <td>
-                            <a href="{{ path('order_detail', {id: order.idOrder}) }}">View</a>
-                            <a href="{{ path('orders_delete', {id: order.idOrder}) }}" onclick="return confirm('Are you sure?')">Delete</a>
-                            <a href="{{ path('orders_update', {id: order.idOrder}) }}">Update Status</a>
+                            <form action= method="get">
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    Detalles
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 {% endfor %}

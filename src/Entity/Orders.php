@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 #[ORM\Table(name: "orders")]
@@ -25,6 +27,16 @@ class Orders
 
     #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private float $total;
+
+    #[ORM\OneToMany(mappedBy: "order", targetEntity: OrderDetail::class, cascade: ["persist", "remove"])]
+    private Collection $orderDetails;
+
+    public function __construct()
+    {
+        $this->order_date = new \DateTime();
+        $this->orderDetails = new ArrayCollection();
+    }
+
 
     // Getter para id_order
     public function getIdOrder(): int

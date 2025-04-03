@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 
 #[ORM\Entity]
 #[ORM\Table(name: "client")]
@@ -30,6 +33,9 @@ class Client
 
     #[ORM\Column(type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private \DateTimeInterface $registration_date;
+
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: Orders::class, cascade: ["persist", "remove"])]
+    private Collection $orders;
 
     public function __construct()
     {
@@ -113,4 +119,17 @@ class Client
         $this->registration_date = $registration_date;
         return $this;
     }
+
+    // Getter y Setter para orders
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function setOrders(Collection $orders): self
+    {
+        $this->orders = $orders;
+        return $this;
+    }
+
 }

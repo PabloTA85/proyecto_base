@@ -19,7 +19,6 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Acciones</th>
                 </tr>
@@ -27,7 +26,6 @@
             <tbody>
                 {% for categoria in categorias %}
                     <tr>
-                        <td>{{ categoria.idCategory }}</td>
                         <td>{{ categoria.name }}</td>
                         <td>
                             <button class="btn btn-warning ver-productos" data-id="{{ categoria.idCategory }}" data-name="{{ categoria.name }}">

@@ -14,11 +14,11 @@ class OrderDetail
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Orders::class)]
-    #[ORM\JoinColumn(name: "id_order", referencedColumnName: "id_order", nullable: false)] // Referencia correctamente a "id_order"
-    private ?Orders $idOrder = null;
+    #[ORM\JoinColumn(name: "id_order", referencedColumnName: "id_order", nullable: false)] 
+    private ?Orders $order = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
-    #[ORM\JoinColumn(name: "id_product", referencedColumnName: "id_product", nullable: false)] // Especificando las columnas
+    #[ORM\JoinColumn(name: "id_product", referencedColumnName: "id_product", nullable: false)] 
     private ?Product $product = null;
 
     #[ORM\Column]
@@ -27,6 +27,7 @@ class OrderDetail
     #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private ?float $subtotal = null;
 
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -34,12 +35,12 @@ class OrderDetail
 
     public function getIdOrder(): ?Orders
     {
-        return $this->idOrder;
+        return $this->order;
     }
 
     public function setIdOrder(?Orders $idOrder): static
     {
-        $this->idOrder = $idOrder;
+        $this->order = $idOrder;
         return $this;
     }
 
